@@ -14,6 +14,17 @@ class Vec3D{
     };
     Vec3D minus(Vec3D const &self);
     Vec3D add(Vec3D const &self, Vec3D const &other);
+    Vec3D sub(Vec3D const &self, Vec3D const &other);
+    Vec3D mul(Vec3D const &self, float scalar);
+    Vec3D div(Vec3D const &self, float scalar);
+    float norm(Vec3D const &self);
+    Vec3D unit(Vec3D const &self);
+    float dot(Vec3D const &self, Vec3D const &other);
+    Vec3D cross(Vec3D const &self, Vec3D const &other);
+}
+
+int main(){
+    functie
 }
 
 class Ray{
