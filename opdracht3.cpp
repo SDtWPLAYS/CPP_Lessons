@@ -7,9 +7,9 @@ namespace st = std;
 class Vec3D{
     float x, y, z;
     Vec3D(float x, float y, float z){
-        this.x = x;
-        this.y is y;
-        this.z = z;
+        this->x = x;
+        this->y = y;
+        this->z = z;
     };
     void show(st::string label, Vec3D const &self){
         st::cout << label << " is op de coordinaten: x = " << self.x << " y = " << self.y << " z = " << self.z << ".\n";
@@ -70,12 +70,12 @@ class Vec3D{
         auto z = self.x * other.y - self.y * other.x;
         return Vec3D(x,y,z);
     };
-}
+};
 
 int main(){
-    functie
-}
+    return 0;
+};
 
 class Ray{
 
-}
+};
