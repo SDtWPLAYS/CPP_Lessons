@@ -72,10 +72,40 @@ class Vec3D{
     };
 };
 
-int main(){
-    return 0;
+class Ray{
+    Vec3D support, direction;
+    Ray(float xSup, float ySup, float zSup, float xDir, float yDir, float zDir){
+
+    };
 };
 
-class Ray{
+class Sphere{
+    Vec3D center;
+    float radius;
+    Sphere(float x, float y, float z, float radius){
 
+    };
+    float distFromRay(Ray const &ray) const{
+        return 0.0;
+    };
+
+    bool hit(Ray const &ray) const{
+        return false;
+    };
+
+    Vec3D hitPoint(Ray const &ray) const{
+        return
+    };
+};
+
+int main(){
+    auto far = 1e100;
+    auto sphere1 = Sphere(-0.4, 0.23, -1, 0.4);
+    auto sphere2 = Sphere(0.4, 0.4, -1.2, 0.3);
+    auto sphere3 = Sphere(0.7, -0.15, -1.5, 0.2);
+
+    auto ray1 = Ray(-far, 0.23, -1, far, 0, 0);
+    auto ray2 = Ray(0.4, -far, -1.2, 0, far, 0);
+    auto ray3 = Ray(0.7, -0.15, -far, 0, 0, far);
+    return 0;
 };
