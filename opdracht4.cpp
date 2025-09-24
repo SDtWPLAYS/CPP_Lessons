@@ -44,6 +44,7 @@ class Ray{ // VPO most likely means virtual private object!
         Ray(float xSup, float ySup, float zSup, float xDir, float yDir, float zDir);
         void replaceHitpoint(Vec3D const &hitpoint);
         void show();
+        bool scan();
 };
 
 class Sphere:Object{
@@ -63,6 +64,15 @@ class Floor:Object{
         Floor();
         bool hit(Ray const &ray)const;
 };
+
+class RayScanner{
+    protected:
+        st::vector<Object> objects;
+    public:
+        RayScanner(Sphere sphere0, Sphere sphere1, Sphere sphere2, Floor floor);
+        void scan(); // 80 breed 40 hoog. Oogpunt zit 3 meter achtere scherm
+};
+
 // Define functions for Vec3D
 Vec3D::Vec3D(float x, float y, float z):x(x), y(y), z(z){};
 
@@ -143,3 +153,27 @@ Vec3D Vec3D::cross(Vec3D const &other) const{ // Calculate the crossproduct of t
 
 // Initialize Object
 Object::Object(float x, float y, float z): center(x, y, z){}
+
+// Initialize Ray
+Ray::Ray(float xSup, float ySup, float zSup, float xDir, float yDir, float zDir){
+    this->support = Vec3D(xSup, ySup, zSup);
+    this->direction = Vec3D(xDir, yDir, zDir);
+};
+
+// Initialize Sphere
+Sphere::Sphere(float x, float y, float z, float radius): Object(x, y, z){
+    this->radius = radius;
+};
+
+// Initialize Floor
+Floor::Floor(): Object(x, y, z){
+
+};
+
+// Initialize Rayscanner
+RayScanner::RayScanner(Sphere sphere0, Sphere sphere1, Sphere sphere2, Floor floor){
+    this->objects.push_back(sphere0);
+    this->objects.push_back(sphere1);
+    this->objects.push_back(sphere2);
+    this->objects.push_back(floor);
+};
