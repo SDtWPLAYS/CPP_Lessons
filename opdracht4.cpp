@@ -1,31 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <C:\Users\Stijn\Documents\HR\Jaar2\programmeren_cpp\opdrachten\vec3D.cpp>
 
 namespace st = std;
-
-class Vec3D{
-    protected:
-        float x, y, z;
-
-    public:
-        Vec3D(float x = 0, float y = 0, float z = 0);
-        float getX();
-        float getY();
-        float getZ();
-        void show(st::string label);
-        void show(st::string label, float scalar);
-        void show();
-        Vec3D minus() const;
-        Vec3D add(Vec3D const &other) const;
-        Vec3D sub(Vec3D const &other) const;
-        Vec3D mul(float scalar) const;
-        Vec3D div(float scalar) const;
-        float norm() const;
-        Vec3D unit() const;
-        float dot(Vec3D const &other) const;
-        Vec3D cross(Vec3D const &other) const;
-    };
 
 class Object{
     protected:
@@ -36,7 +14,8 @@ class Object{
         virtual bool hit(Ray &ray) = 0;
 };
 
-class Ray{ // VPO most likely means virtual private object!
+class Ray{ 
+    // VPO most likely means virtual private object!
     protected:
         Vec3D firstHitpoint;
     public:
@@ -47,22 +26,22 @@ class Ray{ // VPO most likely means virtual private object!
         bool scan();
 };
 
-class Sphere:Object{
+class Sphere:public Object{
     protected:
         float radius;
 
     public:
         Sphere(float x, float y, float z, float radius);
         float distFromRay(Ray const &ray) const;
-        bool hit(Ray const &ray) const;
-        Vec3D hitPoint(Ray const &ray) const;
+        bool hit(Ray &ray);
+        Vec3D hitPoint(Ray &ray) const;
 };
 
-class Floor:Object{
+class Floor:public Object{
     protected:
     public:
         Floor();
-        bool hit(Ray const &ray)const;
+        bool hit(Ray &ray);
 };
 
 class RayScanner{
@@ -70,89 +49,11 @@ class RayScanner{
         st::vector<Object> objects;
     public:
         RayScanner(Sphere sphere0, Sphere sphere1, Sphere sphere2, Floor floor);
-        void scan(); // 80 breed 40 hoog. Oogpunt zit 3 meter achtere scherm
-};
-
-// Define functions for Vec3D
-Vec3D::Vec3D(float x, float y, float z):x(x), y(y), z(z){};
-
-float Vec3D::getX(){return this->x;};
-float Vec3D::getY(){return this->y;};
-float Vec3D::getZ(){return this->z;};
-
-void Vec3D::show(st::string label){ // Print the given string with some constant strings and the x, y, z value of the given vector
-    st::cout << label << " is op de coordinaten: x = " << this->x << " y = " << this->y << " z = " << this->z << "\n";
-};
-
-void Vec3D::show(st::string label, float scalar){ // Print the given string with a constant string and the given float
-    st::cout << label << " is de scalar: " << scalar << "\n";
-};
-
-void Vec3D::show(){ // Print an empty line
-    st::cout << '\n';
-};
-
-Vec3D Vec3D::minus() const{ // Calculate the vector going in the exact opposite direction of the given vector and return it
-    auto x = -this->x;
-    auto y = -this->y;
-    auto z = -this->z;
-    return Vec3D(x,y,z);
-};
-
-Vec3D Vec3D::add(Vec3D const &other) const{ // Add given vector 2 to given vector 1 and return the resulting vector
-    auto x = this->x + other.x;
-    auto y = this->y + other.y;
-    auto z = this->z + other.z;
-    return Vec3D(x,y,z);
-};
-
-Vec3D Vec3D::sub(Vec3D const &other) const{ // Subtract given vector 2 from given vector 1 and return the resulting vector
-    auto x = this->x - other.x;
-    auto y = this->y - other.y;
-    auto z = this->z - other.z;
-    return Vec3D(x,y,z);
-};
-
-Vec3D Vec3D::mul(float scalar) const{ // Multiply the given vector with the given float scalar and return the resulting vector
-    auto x = this->x * scalar;
-    auto y = this->y * scalar;
-    auto z = this->z * scalar;
-    return Vec3D(x,y,z);
-};
-
-Vec3D Vec3D::div(float scalar) const{ // Divide the given vector by the given float scalar and return the resulting vector
-    auto x = this->x / scalar;
-    auto y = this->y / scalar;
-    auto z = this->z / scalar;
-    return Vec3D(x,y,z);
-};
-
-float Vec3D::norm() const{ // Calculate the lenght of the given vector and return it
-    float length = pow(pow(this->x,2) + pow(this->y,2) + pow(this->z,2), 0.5);
-    return length;
-};
-
-Vec3D Vec3D::unit() const{ // Calculate the vector with lenght 1 in the same direction as the given vector and return it
-    auto scalar = norm();
-    return div(scalar);
-};
-
-float Vec3D::dot(Vec3D const &other) const{ // Calculate the dot product of the 2 given vectors and return it
-    auto x = this->x * other.x;
-    auto y = this->y * other.y;
-    auto z = this->z * other.z;
-    return x + y + z;
-};
-
-Vec3D Vec3D::cross(Vec3D const &other) const{ // Calculate the crossproduct of the given vector with the other given vector and return the resulting vector
-    auto x = this->y * other.z - this->z * other.y;
-    auto y = this->z * other.x - this->x * other.z;
-    auto z = this->x * other.y - this->y * other.x;
-    return Vec3D(x,y,z);
+        void scan(int screenWidth); 
 };
 
 // Initialize Object
-Object::Object(float x, float y, float z): center(x, y, z){}
+Object::Object(float x, float y, float z): center(x, y, z){};
 
 // Initialize Ray
 Ray::Ray(float xSup, float ySup, float zSup, float xDir, float yDir, float zDir){
@@ -165,10 +66,36 @@ Sphere::Sphere(float x, float y, float z, float radius): Object(x, y, z){
     this->radius = radius;
 };
 
+float Sphere::distFromRay(Ray const &ray) const{ // Calculate the distance from the centre of the sphere to the ray
+    return ray.support.sub(center).cross(ray.direction).norm(); 
+};
+
+bool Sphere::hit(Ray &ray){
+    // if(distFromRay(ray) <= this->radius){ // If the distance of the ray to the sphere is smaller or equal than its radius then it hits the sphere
+    //     return true;
+    // }      
+    return false;
+};
+
 // Initialize Floor
-Floor::Floor(): Object(x, y, z){
+Floor::Floor(): Object(0.0, -25.0, 0.0){ // Initialize floor 25 meters below center of the screen
 
 };
+
+bool Floor::hit(Ray &ray){
+    auto directionY = ray.direction.getY();
+    if(directionY >= 0) return false; // If y in direction >= 0 then the vector does not go down and because of that will never hit the floor
+    auto lengthHitVector = this->y / directionY;
+    auto hitX = ray.direction.getX() * lengthHitVector;
+    auto hitZ = ray.direction.getZ() * lengthHitVector;
+    if(st::fmod(hitX, 16) < 8){
+        if(st::fmod(hitZ, 8) > 4) return true;
+    }
+    else{
+        if(st::fmod(hitZ, 8) < 4) return true;
+    };
+    return false;
+}
 
 // Initialize Rayscanner
 RayScanner::RayScanner(Sphere sphere0, Sphere sphere1, Sphere sphere2, Floor floor){
@@ -176,4 +103,49 @@ RayScanner::RayScanner(Sphere sphere0, Sphere sphere1, Sphere sphere2, Floor flo
     this->objects.push_back(sphere1);
     this->objects.push_back(sphere2);
     this->objects.push_back(floor);
+};
+
+void RayScanner::scan(int screenWidth){ 
+    st::vector<st::vector<bool>> screen;
+    for(int x = -(screenWidth/2); x < screenWidth/2; x++){ // width of the screen
+        for(int y = -(screenWidth/4); y < screenWidth/4; y++){ // height of the screen
+            auto ray = Ray(0.0, 0.0, -3.0, x, y, 0.0); // start ray 3 meters in front of the screen and goes to the correct pixel in the screen
+            bool hit = false;
+            for(auto &object:objects){
+                if(object.hit(ray)) hit = true;
+            };
+            screen.emplace_back();
+            if(hit){
+                screen[y+(screenWidth/4)].push_back(0.25);
+            }
+            else screen[y+(screenWidth/4)].push_back(0.0);
+        }
+    }
+
+    for(auto y:screen){ // Print screen
+        for(auto x:y){
+            if(x == 0.0){ // No brightness
+                st::cout << "  ";
+            }
+            // else if(x == 0.25){ // Low brightness
+            //     st::cout << "LL";
+            // }
+            // else if(x == 0.5){ // Medium brightness
+            //     st::cout << "PP";
+            // }
+            else{
+                st::cout << "NN"; // High brightness
+            }
+        }
+    }
+};
+
+int main(){
+    auto floor = Floor();
+    auto sphere1 = Sphere(-5, 15, 2, 3);
+    auto sphere2 = Sphere(30, 8, 8, 4.5);
+    auto sphere3 = Sphere(-20.8, 3.6, 9.2, 1.75);
+    auto rayscanner = RayScanner(sphere1, sphere2, sphere3, floor);
+    rayscanner.scan(80); // 80 breed (80 / 2) 40 hoog. Oogpunt zit 3 meter achter het scherm 1.7 meter van de grond
+    return 0;
 };

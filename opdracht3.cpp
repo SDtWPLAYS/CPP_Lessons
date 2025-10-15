@@ -1,31 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <C:\Users\Stijn\Documents\HR\Jaar2\programmeren_cpp\opdrachten\vec3D.cpp>
 
 namespace st = std;
-
-class Vec3D{
-    protected:
-        float x, y, z;
-
-    public:
-        Vec3D(float x = 0, float y = 0, float z = 0);
-        float getX();
-        float getY();
-        float getZ();
-        void show(st::string label);
-        void show(st::string label, float scalar);
-        void show();
-        Vec3D minus() const;
-        Vec3D add(Vec3D const &other) const;
-        Vec3D sub(Vec3D const &other) const;
-        Vec3D mul(float scalar) const;
-        Vec3D div(float scalar) const;
-        float norm() const;
-        Vec3D unit() const;
-        float dot(Vec3D const &other) const;
-        Vec3D cross(Vec3D const &other) const;
-    };
 
 class Ray{
     protected:
@@ -49,89 +27,7 @@ class Sphere{
         Vec3D hitPoint(Ray const &ray) const;
 };
 
-// Define functions for Vec3D
-Vec3D::Vec3D(float x, float y, float z){
-    this->x = x;
-    this->y = y;
-    this->z = z;
-};
-
-float Vec3D::getX(){return this->x;};
-float Vec3D::getY(){return this->y;};
-float Vec3D::getZ(){return this->z;};
-
-void Vec3D::show(st::string label){ // Print the given string with some constant strings and the x, y, z value of the given vector
-    st::cout << label << " is op de coordinaten: x = " << this->x << " y = " << this->y << " z = " << this->z << "\n";
-};
-
-void Vec3D::show(st::string label, float scalar){ // Print the given string with a constant string and the given float
-    st::cout << label << " is de scalar: " << scalar << "\n";
-};
-
-void Vec3D::show(){ // Print an empty line
-    st::cout << '\n';
-};
-
-Vec3D Vec3D::minus() const{ // Calculate the vector going in the exact opposite direction of the given vector and return it
-    auto x = -this->x;
-    auto y = -this->y;
-    auto z = -this->z;
-    return Vec3D(x,y,z);
-};
-
-Vec3D Vec3D::add(Vec3D const &other) const{ // Add given vector 2 to given vector 1 and return the resulting vector
-    auto x = this->x + other.x;
-    auto y = this->y + other.y;
-    auto z = this->z + other.z;
-    return Vec3D(x,y,z);
-};
-
-Vec3D Vec3D::sub(Vec3D const &other) const{ // Subtract given vector 2 from given vector 1 and return the resulting vector
-    auto x = this->x - other.x;
-    auto y = this->y - other.y;
-    auto z = this->z - other.z;
-    return Vec3D(x,y,z);
-};
-
-Vec3D Vec3D::mul(float scalar) const{ // Multiply the given vector with the given float scalar and return the resulting vector
-    auto x = this->x * scalar;
-    auto y = this->y * scalar;
-    auto z = this->z * scalar;
-    return Vec3D(x,y,z);
-};
-
-Vec3D Vec3D::div(float scalar) const{ // Divide the given vector by the given float scalar and return the resulting vector
-    auto x = this->x / scalar;
-    auto y = this->y / scalar;
-    auto z = this->z / scalar;
-    return Vec3D(x,y,z);
-};
-
-float Vec3D::norm() const{ // Calculate the lenght of the given vector and return it
-    float length = pow(pow(this->x,2) + pow(this->y,2) + pow(this->z,2), 0.5);
-    return length;
-};
-
-Vec3D Vec3D::unit() const{ // Calculate the vector with lenght 1 in the same direction as the given vector and return it
-    auto scalar = norm();
-    return div(scalar);
-};
-
-float Vec3D::dot(Vec3D const &other) const{ // Calculate the dot product of the 2 given vectors and return it
-    auto x = this->x * other.x;
-    auto y = this->y * other.y;
-    auto z = this->z * other.z;
-    return x + y + z;
-};
-
-Vec3D Vec3D::cross(Vec3D const &other) const{ // Calculate the crossproduct of the given vector with the other given vector and return the resulting vector
-    auto x = this->y * other.z - this->z * other.y;
-    auto y = this->z * other.x - this->x * other.z;
-    auto z = this->x * other.y - this->y * other.x;
-    return Vec3D(x,y,z);
-};
-
-// Define functions for Sphere
+// // Define functions for Sphere
 Sphere::Sphere(float x, float y, float z, float radius){
     this->center = Vec3D(x, y, z);
     this->radius = radius;
@@ -190,7 +86,7 @@ int main(){
         Ray(0.4, -far, -1.2, 0.0, far, 0.0), 
         Ray(0.7, -0.15, -far, 0.0, 0.0, far)
     });
-    
+
     for(auto &ray:rays){
         for(auto &sphere:spheres){
             if(sphere.hit(ray)){
@@ -199,6 +95,30 @@ int main(){
         }
         ray.show();
     }
+
+    // test part
+    Sphere testSphere = Sphere(1.0, 10.0, 5.0, 2.0);
+    Ray testRayForward = Ray(1.0, 10.0, -far, 0.0, 0.0, far);
+    Ray testRayUp = Ray(1.0, -far, 5.0, 0.0, far, 0.0);
+    Ray testRaySide = Ray(-far, 10.0, 5.0, far, 0.0, 0.0);
+    if(testSphere.hit(testRayForward)){
+        testRayForward.replaceHitpoint(testSphere.hitPoint(testRayForward));
+        testRayForward.show();
+    }
+    else st::cout << "No hit!";
+    // Expected hit at x = 1, y = 10, z = 3 with testSphere(1.0, 10.0, 5.0, 2.0) and testRayForward(1.0, 10.0, -far, 0.0, 0.0, far)
+    if(testSphere.hit(testRayUp)){
+        testRayUp.replaceHitpoint(testSphere.hitPoint(testRayUp));
+        testRayUp.show();
+    }
+    else st::cout << "No hit!";
+    // Expected hit at x = 1, y = 8, z = 5 with testSphere(1.0, 10.0, 5.0, 2.0) and testRayUp(1.0, -far, 5.0, 0.0, far, 0.0)
+    if(testSphere.hit(testRaySide)){
+        testRaySide.replaceHitpoint(testSphere.hitPoint(testRaySide));
+        testRaySide.show();
+    }
+    else st::cout << "No hit!";
+    // Expected hit at x = -1, y = 10, z = 5 with testSphere(1.0, 10.0, 5.0, 2.0) and testRaySide(-far, 10.0, 5.0, far, 0.0, 0.0)
 
     return 0;
 };
